@@ -1,7 +1,14 @@
 
 package uchida.eurekatask1;
 
+import java.util.ArrayList;
+
 public class GourmetFragment extends BaseFragment {
+
+    GourmetFragment(ArrayList<Dribbble> dribbbleList) {
+        super(dribbbleList);
+        // TODO 自動生成されたコンストラクター・スタブ
+    }
 
     final static int[] sImages = {
             R.drawable.g_akashiyaki, R.drawable.g_hiroshima, R.drawable.g_inaniwa,
@@ -17,8 +24,4 @@ public class GourmetFragment extends BaseFragment {
             "うに丼", "うそば"
     };
 
-    public GourmetFragment() {
-        setsImages(sImages);
-        setsDescriptions(sDescriptions);
-    }
 }

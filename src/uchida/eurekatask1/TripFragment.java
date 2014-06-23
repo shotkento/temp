@@ -1,7 +1,17 @@
 
 package uchida.eurekatask1;
 
+import java.util.ArrayList;
+
 public class TripFragment extends BaseFragment {
+
+    private ArrayList<Dribbble> mDribbbleList;
+
+    TripFragment(ArrayList<Dribbble> dribbbleList) {
+        super(dribbbleList);
+        this.mDribbbleList = dribbbleList;
+        // TODO 自動生成されたコンストラクター・スタブ
+    }
 
     final static int[] sImages = {
             R.drawable.souya, R.drawable.hateruma, R.drawable.garage, R.drawable.goraikou,
@@ -17,8 +27,4 @@ public class TripFragment extends BaseFragment {
             "PONTIACS", "白川郷"
     };
 
-    public TripFragment() {
-        setsImages(sImages);
-        setsDescriptions(sDescriptions);
-    }
 }
