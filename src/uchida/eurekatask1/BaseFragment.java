@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Dialog;
-import android.app.ListFragment;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +18,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CardListFragment extends ListFragment {
-    final static int[] sImages = {
-            R.drawable.souya, R.drawable.hateruma, R.drawable.garage, R.drawable.goraikou,
-            R.drawable.gunkanjima, R.drawable.kesennuma, R.drawable.kokudou, R.drawable.mayakan,
-            R.drawable.miyako, R.drawable.nagisa, R.drawable.nebuta, R.drawable.oni,
-            R.drawable.pontiacs, R.drawable.shirakawagou
-    };
+public abstract class BaseFragment extends ListFragment {
+    private int[] sImages = {};
+    private String[] sDescriptions = {};
 
-    final static String[] sDescriptions = {
-            "宗谷岬", "波照間島", "奄美島のガレージ", "富士山",
-            "軍艦島", "気仙沼", "日本国道最高地点", "摩耶観光ホテル",
-            "宮古島", "なぎさドライブウェイ", "ねぶた", "やさしい鬼",
-            "PONTIACS", "白川郷"
-    };
+    public void setsImages(int[] sImages) {
+        this.sImages = sImages;
+    }
+
+    public void setsDescriptions(String[] description) {
+        this.sDescriptions = description;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -127,6 +124,5 @@ public class CardListFragment extends ListFragment {
 
             return convertView;
         }
-
     }
 }
