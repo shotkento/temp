@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity implements TabListener {
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
     private String mNextPageToken;
-    static ArrayList<Dribbble> dribbbleList;
+    private ArrayList<Dribbble> dribbbleList;
 
     private final String urlEveryone = "http://api.dribbble.com/shots/everyone";
     private final String urlDebuts = "http://api.dribbble.com/shots/debuts";
