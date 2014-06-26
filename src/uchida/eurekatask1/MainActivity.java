@@ -66,7 +66,6 @@ public class MainActivity extends FragmentActivity implements TabListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                         temp();
                         Log.w("test DOYA!", "test size=" + dribbbleList.size());
                     }
@@ -77,11 +76,9 @@ public class MainActivity extends FragmentActivity implements TabListener {
                     public void onErrorResponse(VolleyError error) {
                     }
                 }));
-
     }
 
     public void temp() {
-
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
