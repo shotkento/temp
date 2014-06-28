@@ -2,12 +2,13 @@
 package uchida.eurekatask1;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import uchida.eurekatask1.BaseFragment.Dribbble;
+import uchida.eurekatask1.MyFragment.Dribbble;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -35,24 +36,43 @@ public class MainActivity extends FragmentActivity implements TabListener {
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
     private String mNextPageToken;
-    private ArrayList<Dribbble> dribbbleList;
+    private List<Dribbble> dribbbleList;
+    private List<List<Dribbble>> list;
+
+    final String[] tabTitle = {
+            "everyone", "debuts", "popular"
+    };
 
     private final String urlEveryone = "http://api.dribbble.com/shots/everyone";
     private final String urlDebuts = "http://api.dribbble.com/shots/debuts";
-    private final String urlPopular = "http://api.dribbble.c om/shots/popular";
+    private final String urlPopular = "http://api.dribbble.com/shots/popular";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        list = new ArrayList<List<Dribbble>>();
         Log.d("test", "test onCreate");
-        dribbbleList = new ArrayList<Dribbble>();
         mQueue = Volley.newRequestQueue(this);
-        mQueue.add(new JsonObjectRequest(Method.GET, urlEveryone, null,
+        mQueue.add(getJsonRequest(urlEveryone));
+        mQueue.add(getJsonRequest(urlDebuts));
+        mQueue.add(getJsonRequest(urlPopular));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+        temp();
+    }
+
+    private JsonObjectRequest getJsonRequest(String url) {
+        return new JsonObjectRequest(Method.GET, url, null,
                 new Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dribbbleList = new ArrayList<Dribbble>();
                         try {
                             JSONArray shots = response.getJSONArray("shots");
 
@@ -66,7 +86,7 @@ public class MainActivity extends FragmentActivity implements TabListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        temp();
+                        list.add(dribbbleList);
                         Log.w("test DOYA!", "test size=" + dribbbleList.size());
                     }
                 },
@@ -75,16 +95,16 @@ public class MainActivity extends FragmentActivity implements TabListener {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                     }
-                }));
+                });
     }
 
     public void temp() {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(adapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -102,26 +122,18 @@ public class MainActivity extends FragmentActivity implements TabListener {
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter {
-
-        final String[] tabTitle = {
-                "My Trip", "Gourmet"
-        };
-
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
+            MyFragment fragment = new MyFragment();
+            Bundle data = new Bundle();
             Log.d("test", "test getItem");
-            switch (position) {
-                case 0:
-                    Log.w("test MAE!", "test size=" + dribbbleList.size());
-                    return new BaseFragment(dribbbleList);
-                case 1:
-                    return new BaseFragment(dribbbleList);
-            }
-            return null;
+
+            return new MyFragment(list.get(position));
+
         }
 
         @Override
@@ -131,13 +143,7 @@ public class MainActivity extends FragmentActivity implements TabListener {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return tabTitle[0];
-                case 1:
-                    return tabTitle[1];
-            }
-            return super.getPageTitle(position);
+            return tabTitle[position];
         }
     }
 

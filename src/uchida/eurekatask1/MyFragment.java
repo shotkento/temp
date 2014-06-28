@@ -1,7 +1,6 @@
 
 package uchida.eurekatask1;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -17,15 +16,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageLoader.ImageListener;
+import com.android.volley.toolbox.ImageLoader.ImageContainer;
 
-public class BaseFragment extends ListFragment {
+public class MyFragment extends ListFragment {
 
-    private ArrayList<Dribbble> mDribbbleList;
+    private List<Dribbble> mDribbbleList;
 
-    BaseFragment(ArrayList<Dribbble> dribbbleList) {
+    MyFragment(List<Dribbble> dribbbleList) {
         this.mDribbbleList = dribbbleList;
         Log.d("test DA!", "test size=" + dribbbleList.size());
+    }
+
+    public MyFragment() {
+        // TODO 自動生成されたコンストラクター・スタブ
     }
 
     @Override
@@ -97,6 +100,8 @@ public class BaseFragment extends ListFragment {
     static class ViewHolder {
         ImageView image;
         TextView title;
+        TextView name;
+        TextView likes;
     }
 
     public class CustomAdapter extends ArrayAdapter<Dribbble> {
@@ -119,6 +124,8 @@ public class BaseFragment extends ListFragment {
                 holder = new ViewHolder();
                 holder.image = (ImageView) convertView.findViewById(R.id.image);
                 holder.title = (TextView) convertView.findViewById(R.id.title);
+                holder.name = (TextView) convertView.findViewById(R.id.name);
+                holder.likes = (TextView) convertView.findViewById(R.id.likes);
 
                 convertView.setTag(holder);
             } else {
@@ -129,12 +136,25 @@ public class BaseFragment extends ListFragment {
             final Dribbble dribbble = (Dribbble) this.getItem(position);
             if (dribbble != null) {
                 holder.title.setText(dribbble.getTitle());
+                holder.name.setText(dribbble.getPlayer());
+                holder.likes.setText("Like: " + dribbble.getLikes());
 
-                ImageListener listener = ImageLoader.getImageListener(holder.image,
-                        android.R.drawable.spinner_background /* 表示待ち時の画像 */,
-                        android.R.drawable.ic_dialog_alert /* エラー時の画像 */);
+                ImageContainer imageContainer = (ImageContainer) holder.image.getTag();
+                if (imageContainer != null) {
+                    imageContainer.cancelRequest();
+                }
 
-                mImageLoader.get(dribbble.getImage(), listener);
+                Log.d("test", "test image =" + dribbble.getImage());
+                // ImageListener listener =
+                // ImageLoader.getImageListener(holder.image,
+                // android.R.drawable.spinner_background /* 表示待ち時の画像 */,
+                // android.R.drawable.ic_dialog_alert /* エラー時の画像 */);
+                //
+                // Log.d("test", "test koko");
+                // holder.image.setTag(mImageLoader.get(dribbble.getImage(),
+                // listener));
+
+                Log.d("test", "test saigo");
             }
 
             return convertView;
