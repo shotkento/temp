@@ -62,6 +62,7 @@ public class MainActivity extends FragmentActivity implements TabListener {
         public Fragment getItem(int position) {
             MyFragment fragment = new MyFragment();
             Bundle data = new Bundle();
+            data.putString(getString(R.string.KEY_CATEGORY), TAB_TITLE[position]);
             switch (position) {
                 case 0:
                     data.putString(getString(R.string.KEY_URL), URL_EVERYONE);

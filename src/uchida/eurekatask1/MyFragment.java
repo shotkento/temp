@@ -8,8 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -40,12 +43,18 @@ public class MyFragment extends ListFragment {
     private List<Dribbble> mDribbbleList;
     private RequestQueue mQueue;
     private String mUrl;
+    private String mCategory;
     private ImageLoader mImageLoader;
+    private SimpleDatabaseHelper mHelper;
+    private String[] mCols = {
+            Constants.TITLE, Constants.IMAGE_URL, Constants.LIKES_COUNT, Constants.NAME
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mHelper = new SimpleDatabaseHelper(getActivity());
         mDribbbleList = new ArrayList<Dribbble>();
 
         // ListViewの形成
@@ -56,29 +65,46 @@ public class MyFragment extends ListFragment {
 
         // URLの取得
         mUrl = getArguments().getString(getString(R.string.KEY_URL));
+        // カテゴリの取得
+        mCategory = getArguments().getString(getString(R.string.KEY_CATEGORY));
 
         // リクエストの発行
         mQueue = Volley.newRequestQueue(getActivity());
-        mQueue.add(getJsonRequest(mUrl));
+        mQueue.add(getJsonRequest());
     }
 
-    private JsonObjectRequest getJsonRequest(String url) {
-        return new JsonObjectRequest(Method.GET, url, null,
+    private JsonObjectRequest getJsonRequest() {
+        return new JsonObjectRequest(Method.GET, mUrl, null,
                 new Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            SQLiteDatabase db = mHelper.getWritableDatabase();
                             JSONArray shots = response.getJSONArray("shots");
 
                             for (int i = 0; i < shots.length(); i++) {
                                 JSONObject shot = shots.getJSONObject(i);
                                 JSONObject player = shot.getJSONObject("player");
-                                mDribbbleList.add(new Dribbble(shot.getString("title"),
-                                        shot.getString("image_url"), shot.getString("likes_count"),
-                                        player.getString("name")));
+                                ContentValues cv = new ContentValues();
+                                cv.put("category", mCategory);
+                                cv.put(Constants.TITLE, shot.getString(Constants.TITLE));
+                                cv.put(Constants.IMAGE_URL, shot.getString(Constants.IMAGE_URL));
+                                cv.put(Constants.LIKES_COUNT, shot.getString(Constants.LIKES_COUNT));
+                                cv.put(Constants.NAME, player.getString(Constants.NAME));
+                                db.insert(Constants.TBL_NAME, null, cv);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        }
+                        SQLiteDatabase db = mHelper.getReadableDatabase();
+                        Cursor cs = db.query(Constants.DB_NAME, mCols, "category = ?",
+                                new String[] {
+                                    mCategory
+                                }, null, null, null, null);
+                        while (cs.moveToNext()) {
+                            mDribbbleList.add(new Dribbble(cs.getString(0),
+                                    cs.getString(1), cs.getString(2),
+                                    cs.getString(3)));
                         }
 
                         // Adapterを生成してセット
