@@ -133,7 +133,6 @@ public class MainActivity extends FragmentActivity implements TabListener {
             Log.d("test", "test getItem");
 
             return new MyFragment(list.get(position));
-
         }
 
         @Override
