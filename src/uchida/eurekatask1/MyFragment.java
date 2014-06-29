@@ -8,8 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -17,7 +17,6 @@ import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -41,6 +40,7 @@ public class MyFragment extends ListFragment {
     private List<Dribbble> mDribbbleList;
     private RequestQueue mQueue;
     private String mUrl;
+    private ImageLoader mImageLoader;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -100,16 +100,10 @@ public class MyFragment extends ListFragment {
         // 選択された１行を取得
         Dribbble dribbble = (Dribbble) l.getItemAtPosition(position);
 
-        // イメージ取得
-        ImageView iv = new ImageView(getActivity());
-        iv.setScaleType(ImageView.ScaleType.FIT_XY);
-        iv.setAdjustViewBounds(true);
-
-        // ダイアログ表示
-        Dialog dialog = new Dialog(getActivity());
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(iv);
-        dialog.show();
+        // 選択画像表示Activityに遷移
+        Intent intent = new Intent(getActivity(), uchida.eurekatask1.ViewerActivity.class);
+        intent.putExtra(getString(R.string.KEY_URL), dribbble.getImage());
+        startActivity(intent);
     }
 
     public static class Dribbble {
@@ -176,7 +170,6 @@ public class MyFragment extends ListFragment {
 
     public class CustomAdapter extends ArrayAdapter<Dribbble> {
         LayoutInflater mInflater;
-        private ImageLoader mImageLoader;
 
         public CustomAdapter(Context context, List<Dribbble> objects) {
             super(context, 0, objects);
